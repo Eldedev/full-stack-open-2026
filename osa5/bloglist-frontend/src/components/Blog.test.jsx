@@ -44,3 +44,33 @@ test('clicking the button calls event handler once and shows extra info', async 
 
     expect(div).toBeVisible()
 })
+
+test('clicking the like button calls event handler twice', async () => {
+    const user1 = {
+        username: 'Elde',
+        name: 'Elias'
+    }
+    const blog = {
+        title: 'Component testing is done with react-testing-library',
+        author: 'Alex Stubb',
+        url: 'Herewego.eu',
+        user: user1
+    }
+
+    const mockHandler = vi.fn()
+
+    render(
+        <Blog blog={blog} addLike={mockHandler}/>
+    )
+
+    const user = userEvent.setup()
+    const button = screen.getByText('view')
+    await user.click(button)
+
+    const likeButton = screen.getByText('like')
+    await user.click(likeButton)
+    await user.click(likeButton)
+
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
+})
