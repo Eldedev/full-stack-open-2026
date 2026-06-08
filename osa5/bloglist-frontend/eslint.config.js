@@ -6,6 +6,14 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 export default [
     { ignores: ['dist'] },
     {
+        files: ['**/*.test.{js,jsx}'],
+        languageOptions: {
+            globals: {
+                ...globals.vitest
+            }
+        }
+    },
+    {
         files: ['**/*.{js,jsx}'],
         languageOptions: {
             ecmaVersion: 2020,
@@ -29,7 +37,7 @@ export default [
                 { allowConstantExport: true }
             ],
             indent: ['error', 4],
-            'linebreak-style': ['error', 'unix'],
+            'linebreak-style': ['error', 'windows'],
             quotes: ['error', 'single'],
             semi: ['error', 'never'],
             eqeqeq: 'error',
@@ -37,6 +45,7 @@ export default [
             'object-curly-spacing': ['error', 'always'],
             'arrow-spacing': ['error', { before: true, after: true }],
             'no-console': 'off'
-        }
+        },
+
     }
 ]
