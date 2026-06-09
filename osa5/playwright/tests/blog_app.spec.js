@@ -62,7 +62,7 @@ describe('Blog app', () => {
             await expect(page.locator(".blog-container").filter({hasText: "a blog created by Elias joopakko"})).toBeVisible()
         })
 
-        describe('and several notes exists', () => {
+        describe('and several blogs exists', () => {
             beforeEach(async ({ page }) => {
                 await page.getByRole('button', { name: 'create' }).click()
                 await page.getByRole('textbox', {name: "title"}).fill('a blog created by')
