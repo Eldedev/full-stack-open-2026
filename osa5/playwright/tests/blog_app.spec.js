@@ -59,7 +59,37 @@ describe('Blog app', () => {
             await page.getByRole('textbox', {name: "author"}).fill('Elias joopakko')
             await page.getByRole('textbox', {name: "url"}).fill('www.miksei.com')
             await page.getByRole('button', { name: 'create' }).click()
-            await expect(page.locator(".blog-container").filter({hasText: "a blog created by Elias joopakko"}))
+            await expect(page.locator(".blog-container").filter({hasText: "a blog created by Elias joopakko"})).toBeVisible()
+        })
+
+        describe('and several notes exists', () => {
+            beforeEach(async ({ page }) => {
+                await page.getByRole('button', { name: 'create' }).click()
+                await page.getByRole('textbox', {name: "title"}).fill('a blog created by')
+                await page.getByRole('textbox', {name: "author"}).fill('Elias joopakko')
+                await page.getByRole('textbox', {name: "url"}).fill('www.miksei.com')
+                await page.getByRole('button', { name: 'create' }).click()
+
+                await expect(page.locator(".blog-container").filter({hasText: "a blog created by Elias joopakko"})).toBeVisible()
+
+                await page.getByRole('button', { name: 'create' }).click()
+                await page.getByRole('textbox', {name: "title"}).fill('a 2nd blog created by')
+                await page.getByRole('textbox', {name: "author"}).fill('Aleksi salminen')
+                await page.getByRole('textbox', {name: "url"}).fill('www.tässä.com')
+                await page.getByRole('button', { name: 'create' }).click()
+            })
+
+            test('blog can be liked', async ({ page }) => {
+                const firstBlogElement = page.locator(".blog-container").filter({hasText: "a blog created by Elias joopakko"})
+
+                await firstBlogElement.getByRole('button', { name: 'view' }).click()
+
+                const firstBlog = page.locator(".blog").filter({ hasText: "a blog created by Elias joopakko"})
+
+                await firstBlog.getByRole("button", {name: "like"}).click()
+
+                await expect(firstBlog.locator(".like-count")).toHaveText("1")
+            })
         })
     })
 })
