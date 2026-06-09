@@ -21,7 +21,7 @@ describe('Blog app', () => {
         await expect(usernameField).toBeVisible()
         await expect(passwordField).toBeVisible()
     })
-    describe.only('Login', () => {
+    describe('Login', () => {
         test('succeeds with correct credentials', async ({ page }) => {
             await page.getByLabel('username').fill('mluukkai')
             await page.getByLabel('password').fill('salainen')
@@ -44,6 +44,22 @@ describe('Blog app', () => {
             await expect(errorDiv).toHaveCSS('color', 'rgb(255, 0, 0)')
 
             await expect(page.getByText('Matti Luukkainen logged in')).not.toBeVisible()
+        })
+    })
+    describe.only('When logged in', () => {
+        beforeEach(async ({ page }) => {
+            await page.getByLabel('username').fill('mluukkai')
+            await page.getByLabel('password').fill('salainen')
+            await page.getByRole('button', { name: 'login' }).click()
+        })
+
+        test('a new blog can be created', async ({ page }) => {
+            await page.getByRole('button', { name: 'create' }).click()
+            await page.getByRole('textbox', {name: "title"}).fill('a blog created by')
+            await page.getByRole('textbox', {name: "author"}).fill('Elias joopakko')
+            await page.getByRole('textbox', {name: "url"}).fill('www.miksei.com')
+            await page.getByRole('button', { name: 'create' }).click()
+            await expect(page.locator(".blog-container").filter({hasText: "a blog created by Elias joopakko"}))
         })
     })
 })
