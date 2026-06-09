@@ -46,7 +46,7 @@ describe('Blog app', () => {
             await expect(page.getByText('Matti Luukkainen logged in')).not.toBeVisible()
         })
     })
-    describe.only('When logged in', () => {
+    describe('When logged in', () => {
         beforeEach(async ({ page }) => {
             await page.getByLabel('username').fill('mluukkai')
             await page.getByLabel('password').fill('salainen')
@@ -77,6 +77,8 @@ describe('Blog app', () => {
                 await page.getByRole('textbox', {name: "author"}).fill('Aleksi salminen')
                 await page.getByRole('textbox', {name: "url"}).fill('www.tässä.com')
                 await page.getByRole('button', { name: 'create' }).click()
+
+                await expect(page.locator(".blog-container").filter({hasText: "a 2nd blog created by Aleksi salminen"})).toBeVisible()
             })
 
             test('blog can be liked', async ({ page }) => {
@@ -89,6 +91,26 @@ describe('Blog app', () => {
                 await firstBlog.getByRole("button", {name: "like"}).click()
 
                 await expect(firstBlog.locator(".like-count")).toHaveText("1")
+            })
+
+            test('blog can be delted', async ({ page }) => {
+                const firstBlogElement = page.locator(".blog-container").filter({hasText: "a blog created by Elias joopakko"})
+
+                await firstBlogElement.getByRole('button', { name: 'view' }).click()
+
+                const firstBlog = page.locator(".blog").filter({ hasText: "a blog created by Elias joopakko"})
+
+                page.on("dialog", async dialog => {
+                    expect(dialog.message()).toBe("Remove blog a blog created by by Elias joopakko")
+                    await dialog.accept()
+                })
+
+                await firstBlog.getByRole("button", {name: "remove"}).click()
+
+
+                await expect(page.locator(".blog-container").filter({hasText: "a blog created by Elias joopakko"})).not.toBeVisible()
+                await expect(page.locator(".blog").filter({hasText: "a blog created by Elias joopakko"})).not.toBeVisible()
+
             })
         })
     })
